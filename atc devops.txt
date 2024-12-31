@@ -1,0 +1,79 @@
+# first you can create the docker application
+
+FROM nginx:alpine
+
+copy the static html file to the container
+
+COPY index.html /usr/share/nginx/html
+ 
+expose the default port
+
+EXPOSE 80
+
+AFTER create index.html file in the same directory
+
+<html>
+<head>
+   <title>Hello world</title>
+</head>
+<body>
+    <h1>Hello, kubernates</h1>
+</body>
+</html>
+
+NEXT build and push to docker image to the container regiisitY
+
+docker build -t <prana>/hello-world.docker push<prana>/hello-world
+
+#terraform script for kubernates cluster
+main.tf
+
+provider "aws"{
+ project = "<project -id>"
+ region  = "<us-central>"
+}
+
+provider "kubernates"{
+host =aws_contaner cluster.primary.endpoint
+resource "aws_container_cluster" "primary"{
+name  ="hello-world-cluster"
+location="us-central"
+initial_node_count =3
+ machine _type ="e2-medium"
+}
+}
+
+kubernates deployment
+
+apiversion: apps/v1
+kind: deployment
+metadata:
+  name: hello-world
+spec:
+    replicas: 3
+    selector:
+       match labels:
+           app: hello-world
+       template:
+         metadata:
+           labels:
+             app: hello-world
+           spec:
+              contaners:
+                -name: hello-world
+                 image:<docker -hub-username>/hello-world
+                 ports:
+                    -containerport: 80
+
+Next apply terraform and deployapp
+
+terraform init (initialize)
+terraform apply (apply terraform configuration)
+aws container cluster get-credentials hello-world-cluter--region us-central --project <your aws-project -id>
+
+apply the kubernates deployment
+
+kubectl apply -f deployment.yaml
+
+ACCESS the applicaton 
+kubectl get service hello-world-service         
